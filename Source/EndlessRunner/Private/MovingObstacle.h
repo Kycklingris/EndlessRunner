@@ -4,24 +4,23 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "MyPlatform.generated.h"
+#include "MovingObstacle.generated.h"
 
 UCLASS()
-class AMyPlatform : public AActor
+class AMovingObstacle : public AActor
 {
 	GENERATED_BODY()
 	
-  public:	
+public:	
 	// Sets default values for this actor's properties
-	AMyPlatform();
+	AMovingObstacle();
 
-	float GetLength();
-
-  protected:
-
+protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-  private:
-	float Length = -1.f;
+public:	
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
 };

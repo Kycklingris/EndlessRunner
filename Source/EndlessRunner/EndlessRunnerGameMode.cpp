@@ -5,13 +5,37 @@
 #include "UObject/ConstructorHelpers.h"
 
 AEndlessRunnerGameMode::AEndlessRunnerGameMode() {
-
+	PrimaryActorTick.bCanEverTick = true;
 }
 
 // Called when the game starts or when spawned
 void AEndlessRunnerGameMode::BeginPlay() {
 	Super::BeginPlay();
 	SpawnPlatforms();
+}
+
+void AEndlessRunnerGameMode::Tick(float DeltaTime) {
+	Super::Tick(DeltaTime);
+
+	if (Length < MinLength) {
+		SpawnPlatforms();
+	}
+
+	for (AMyPlatform *Platform : Platforms) {
+		if (!IsValid(Platform) || Platform->IsActorBeingDestroyed()) {
+			continue;
+		}
+
+		auto PlatformLength = Platform->GetLength();
+		auto Location = Platform->GetActorLocation();
+		auto NewLocation = FVector(Location.X - PlatformMoveSpeed * DeltaTime, 0.f, 0.f);
+		Platform->SetActorLocation(NewLocation);
+
+		if (NewLocation.X + PlatformLength / 2.f < StartingPoint) {
+			Length = Length - PlatformLength;
+			Platform->Destroy();
+		}
+	}
 }
 
 void AEndlessRunnerGameMode::SpawnPlatforms() {
@@ -31,23 +55,21 @@ void AEndlessRunnerGameMode::SpawnPlatforms() {
 		float PlatformLength = Platform->GetLength();
 		Platform->SetActorLocation(FVector((PlatformLength / 2.f) + StartingPoint + Length, 0.f, 0.f));
 		Length += PlatformLength;
+		StorePlatform(Platform);
 
 		if (Length >= MinLength) {
-			break;
+			return;
 		}
 	}
 }
 
-float AEndlessRunnerGameMode::UpdateLength(float Modifier) {
-	Length += Modifier;
-
-	if (Length < MinLength) {
-		SpawnPlatforms();
+void AEndlessRunnerGameMode::StorePlatform(AMyPlatform *Platform) {
+	for (int i = 0; i < Platforms.Num(); i++) {
+		if (!IsValid(Platforms[i])) {
+			Platforms[i] = Platform;
+			return;
+		}
 	}
 
-	return Length;
-}
-
-float AEndlessRunnerGameMode::GetLength() {
-	return Length;
+	Platforms.Add(Platform);
 }

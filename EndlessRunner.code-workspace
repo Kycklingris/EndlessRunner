@@ -18,7 +18,9 @@
 			"xlocale": "cpp",
 			"xutility": "cpp",
 			"__locale": "cpp",
-			"ios": "cpp"
+			"ios": "cpp",
+			"__config": "cpp",
+			"__nullptr": "cpp"
 		}
 	},
 	"extensions": {

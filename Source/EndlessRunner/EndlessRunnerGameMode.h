@@ -26,15 +26,19 @@ UCLASS(minimalapi) class AEndlessRunnerGameMode : public AGameModeBase {
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TArray<TSubclassOf<AMyPlatform>> SpawnablePlatforms;
 
-  public:
-	float UpdateLength(float Modifier);
-	float GetLength();
 
   private:
 	float Length = 0;
+	TArray<AMyPlatform *> Platforms;
+
 	void SpawnPlatforms();
+	void StorePlatform(AMyPlatform *Platform);
 
   protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+  public:
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
 };
