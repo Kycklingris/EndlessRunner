@@ -3,27 +3,53 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Character.h"
+#include "GameFramework/Pawn.h"
 #include "MyCharacter.generated.h"
 
 UCLASS()
-class AMyCharacter : public ACharacter
-{
+class AMyCharacter : public APawn {
 	GENERATED_BODY()
 
-public:
+  public:
 	// Sets default values for this character's properties
 	AMyCharacter();
 
-protected:
+  protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
+  public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	
+	virtual void SetupPlayerInputComponent(class UInputComponent *PlayerInputComponent) override;
+
+  public:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	USceneComponent *DefaultRoot = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	class USkeletalMeshComponent *Mesh;
+
+	UPROPERTY(EditDefaultsOnly)
+	float CameraDistance = 250.f;
+
+	int Position = -1;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UInputAction *LeftAction;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UInputAction *RightAction;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UInputMappingContext *MappingContext;
+
+	void Input_Move_Left(const struct FInputActionValue &InputActionValue);
+
+	void Input_Move_Right(const struct FInputActionValue &InputActionValue);
+
+  private:
+	class UCameraComponent *OurCamera;
 };

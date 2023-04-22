@@ -26,7 +26,6 @@ UCLASS(minimalapi) class AEndlessRunnerGameMode : public AGameModeBase {
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TArray<TSubclassOf<AMyPlatform>> SpawnablePlatforms;
 
-
   private:
 	float Length = 0;
 	TArray<AMyPlatform *> Platforms;
