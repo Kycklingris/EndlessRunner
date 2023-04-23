@@ -24,6 +24,7 @@ UCLASS(minimalapi) class AEndlessRunnerGameMode : public AGameModeBase {
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TArray<TSubclassOf<class AMyPlatform>> SpawnablePlatforms;
 
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	float FirstObstacleSpawnPoint = 5.f;
 
@@ -32,9 +33,6 @@ UCLASS(minimalapi) class AEndlessRunnerGameMode : public AGameModeBase {
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	float DistanceBetweenObstacles = 150.f;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	float ObstacleBaseMoveSpeed = 50.f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	float ObstacleMinMultiplier = 0.5f;
@@ -52,7 +50,7 @@ UCLASS(minimalapi) class AEndlessRunnerGameMode : public AGameModeBase {
 	void SpawnPlatforms();
 	void StorePlatform(AMyPlatform *Platform);
 
-	int64 SpawnNextObstacle = -1;
+	class AMovingObstacle *LastObstacle;
 	int SpawnSide = 1;
 
 	void SpawnObstacle();

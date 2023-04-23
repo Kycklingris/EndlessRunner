@@ -41,7 +41,9 @@ void AEndlessRunnerGameMode::Tick(float DeltaTime) {
 	}
 	// #endfold
 
-	if (SpawnNextObstacle < FDateTime::UtcNow().ToUnixTimestamp()) {
+	if ((LastObstacle->GetActorLocation().X + (LastObstacle->GetLength() / 2.f)) <
+		ObstacleSpawnPoint - DistanceBetweenObstacles) {
+		SpawnObstacle();
 	}
 }
 
@@ -82,6 +84,27 @@ void AEndlessRunnerGameMode::StorePlatform(AMyPlatform *Platform) {
 }
 
 void AEndlessRunnerGameMode::SpawnObstacle() {
+	int Index = FMath::RandRange(0, SpawnableObstacles.Num() - 1);
+
+	FActorSpawnParameters SpawnInfo;
+
+	auto Obstacle = GetWorld()->SpawnActor<AMovingObstacle>(
+		SpawnableObstacles[Index], FVector(0.f, 0.f, 0.f), FRotator(0.f), SpawnInfo);
+
+	float LengthModifier = FMath::RandRange(1.f, 10.f);
+	Obstacle->SetActorRelativeScale3D(FVector(LengthModifier, 1.f, 1.f));
+	float ObstacleLength = Obstacle->GetLength();
+
+	Obstacle->MovementSpeed = PlatformMoveSpeed;
+	// Obstacle->MovementSpeedMultipier = 1.0f;
+	Obstacle->DespawnPoint = StartingPoint;
+
+	float Y = 50.f * SpawnSide;
+	SpawnSide *= -1;
+
+	Obstacle->SetActorLocation(FVector((ObstacleLength / 2.f) + ObstacleSpawnPoint, Y, 50.f));
+
+	LastObstacle = Obstacle;
 }
 
 void AEndlessRunnerGameMode::PreSpawnObstacles() {
@@ -99,8 +122,8 @@ void AEndlessRunnerGameMode::PreSpawnObstacles() {
 		Obstacle->SetActorRelativeScale3D(FVector(LengthModifier, 1.f, 1.f));
 		float ObstacleLength = Obstacle->GetLength();
 
-		Obstacle->MovementSpeed = PlatformMoveSpeed + ObstacleBaseMoveSpeed;
-		Obstacle->MovementSpeedMultipier = 1.0f;
+		Obstacle->MovementSpeed = PlatformMoveSpeed;
+		// Obstacle->MovementSpeedMultipier = 1.0f;
 		Obstacle->DespawnPoint = StartingPoint;
 
 		float Y = 50.f * SpawnSide;
@@ -112,6 +135,7 @@ void AEndlessRunnerGameMode::PreSpawnObstacles() {
 		SpawnSide *= -1;
 
 		if (CurrentSpawnPoint >= ObstacleSpawnPoint) {
+			LastObstacle = Obstacle;
 			return;
 		}
 	}
