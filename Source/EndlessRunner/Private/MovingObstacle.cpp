@@ -1,31 +1,54 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "MovingObstacle.h"
 #include "../EndlessRunnerGameMode.h"
 #include "EndlessRunnerGameState.h"
 #include "Kismet/GameplayStatics.h"
+#include "Components/BoxComponent.h"
 
 // Sets default values
-AMovingObstacle::AMovingObstacle()
-{
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+AMovingObstacle::AMovingObstacle() {
+	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
+	UBoxComponent *Collider = CreateDefaultSubobject<UBoxComponent>(TEXT("RootComponent"));
+	Collider->SetCollisionProfileName(FName("Trigger"));
+	RootComponent = Collider;
+
+	Cube = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Cube"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(TEXT("StaticMesh'/Engine/BasicShapes/Cube.Cube'"));
+	UStaticMesh *Asset = MeshAsset.Object;
+	Cube->SetStaticMesh(Asset);
+	Cube->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned
-void AMovingObstacle::BeginPlay()
-{
+void AMovingObstacle::BeginPlay() {
 	Super::BeginPlay();
-	
 }
 
 // Called every frame
-void AMovingObstacle::Tick(float DeltaTime)
-{
+void AMovingObstacle::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
 
+	auto Location = GetActorLocation();
+	Location.X -= MovementSpeed * MovementSpeedMultipier * DeltaTime;
+	SetActorLocation(Location);
+
+	if (Location.X + GetLength() / 2.f < DespawnPoint) {
+		Destroy();
+	}
 }
 
+float AMovingObstacle::GetLength() {
+	if (Length > 0) {
+		return Length;
+	}
+
+	FVector BoxExtent;
+	FVector Origin;
+	GetActorBounds(false, Origin, BoxExtent, true);
+	Length = BoxExtent.X * 2.f;
+
+	return Length;
+}

@@ -26,10 +26,7 @@ class AMyCharacter : public APawn {
 	virtual void SetupPlayerInputComponent(class UInputComponent *PlayerInputComponent) override;
 
   public:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	USceneComponent *DefaultRoot = nullptr;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rendering")
 	class USkeletalMeshComponent *Mesh;
 
 	UPROPERTY(EditDefaultsOnly)

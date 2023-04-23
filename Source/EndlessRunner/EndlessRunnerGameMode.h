@@ -6,32 +6,57 @@
 #include "GameFramework/GameModeBase.h"
 #include "EndlessRunnerGameMode.generated.h"
 
-class AMyPlatform;
-
 UCLASS(minimalapi) class AEndlessRunnerGameMode : public AGameModeBase {
 	GENERATED_BODY()
 
   public:
 	AEndlessRunnerGameMode();
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	float StartingPoint = 0.f;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	float StartingPoint = -3000.f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	float MinLength = 0.f;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	float MinLength = 20000.f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	float PlatformMoveSpeed = 0.f;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	float PlatformMoveSpeed = 200.f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TArray<TSubclassOf<AMyPlatform>> SpawnablePlatforms;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TArray<TSubclassOf<class AMyPlatform>> SpawnablePlatforms;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	float FirstObstacleSpawnPoint = 5.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	float ObstacleSpawnPoint = 17000.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	float DistanceBetweenObstacles = 150.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	float ObstacleBaseMoveSpeed = 50.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	float ObstacleMinMultiplier = 0.5f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	float ObstacleMaxMultiplier = 2.0f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TArray<TSubclassOf<class AMovingObstacle>> SpawnableObstacles;
 
   private:
-	float Length = 0;
+	float PlatformsLength = 0;
 	TArray<AMyPlatform *> Platforms;
 
 	void SpawnPlatforms();
 	void StorePlatform(AMyPlatform *Platform);
+
+	int64 SpawnNextObstacle = -1;
+	int SpawnSide = 1;
+
+	void SpawnObstacle();
+	void PreSpawnObstacles();
 
   protected:
 	// Called when the game starts or when spawned

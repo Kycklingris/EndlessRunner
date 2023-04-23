@@ -7,20 +7,30 @@
 #include "MovingObstacle.generated.h"
 
 UCLASS()
-class AMovingObstacle : public AActor
-{
+class AMovingObstacle : public AActor {
 	GENERATED_BODY()
-	
-public:	
+
+  public:
 	// Sets default values for this actor's properties
 	AMovingObstacle();
 
-protected:
+  protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
+  public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	float GetLength();
 
+	float MovementSpeed = 0.0f;
+	float MovementSpeedMultipier = 1.0f;
+
+	float DespawnPoint = 0.f;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UStaticMeshComponent *Cube;
+
+  private:
+	float Length = -1.f;
 };

@@ -2,6 +2,7 @@
 
 #include "EndlessRunnerGameMode.h"
 #include "Private/MyPlatform.h"
+#include "Private/MovingObstacle.h"
 #include "UObject/ConstructorHelpers.h"
 
 AEndlessRunnerGameMode::AEndlessRunnerGameMode() {
@@ -12,12 +13,14 @@ AEndlessRunnerGameMode::AEndlessRunnerGameMode() {
 void AEndlessRunnerGameMode::BeginPlay() {
 	Super::BeginPlay();
 	SpawnPlatforms();
+	PreSpawnObstacles();
 }
 
 void AEndlessRunnerGameMode::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
 
-	if (Length < MinLength) {
+	// #fold Spawn Platforms
+	if (PlatformsLength < MinLength) {
 		SpawnPlatforms();
 	}
 
@@ -32,9 +35,13 @@ void AEndlessRunnerGameMode::Tick(float DeltaTime) {
 		Platform->SetActorLocation(NewLocation);
 
 		if (NewLocation.X + PlatformLength / 2.f < StartingPoint) {
-			Length = Length - PlatformLength;
+			PlatformsLength -= PlatformLength;
 			Platform->Destroy();
 		}
+	}
+	// #endfold
+
+	if (SpawnNextObstacle < FDateTime::UtcNow().ToUnixTimestamp()) {
 	}
 }
 
@@ -53,11 +60,11 @@ void AEndlessRunnerGameMode::SpawnPlatforms() {
 			SpawnablePlatforms[Index], FVector(0.f, 0.f, 0.f), FRotator(0.f), SpawnInfo);
 
 		float PlatformLength = Platform->GetLength();
-		Platform->SetActorLocation(FVector((PlatformLength / 2.f) + StartingPoint + Length, 0.f, 0.f));
-		Length += PlatformLength;
+		Platform->SetActorLocation(FVector((PlatformLength / 2.f) + StartingPoint + PlatformsLength, 0.f, 0.f));
+		PlatformsLength += PlatformLength;
 		StorePlatform(Platform);
 
-		if (Length >= MinLength) {
+		if (PlatformsLength >= MinLength) {
 			return;
 		}
 	}
@@ -72,4 +79,40 @@ void AEndlessRunnerGameMode::StorePlatform(AMyPlatform *Platform) {
 	}
 
 	Platforms.Add(Platform);
+}
+
+void AEndlessRunnerGameMode::SpawnObstacle() {
+}
+
+void AEndlessRunnerGameMode::PreSpawnObstacles() {
+	float CurrentSpawnPoint = FirstObstacleSpawnPoint;
+
+	while (true) {
+		int Index = FMath::RandRange(0, SpawnableObstacles.Num() - 1);
+
+		FActorSpawnParameters SpawnInfo;
+
+		auto Obstacle = GetWorld()->SpawnActor<AMovingObstacle>(
+			SpawnableObstacles[Index], FVector(0.f, 0.f, 0.f), FRotator(0.f), SpawnInfo);
+
+		float LengthModifier = FMath::RandRange(1.f, 10.f);
+		Obstacle->SetActorRelativeScale3D(FVector(LengthModifier, 1.f, 1.f));
+		float ObstacleLength = Obstacle->GetLength();
+
+		Obstacle->MovementSpeed = PlatformMoveSpeed + ObstacleBaseMoveSpeed;
+		Obstacle->MovementSpeedMultipier = 1.0f;
+		Obstacle->DespawnPoint = StartingPoint;
+
+		float Y = 50.f * SpawnSide;
+
+		Obstacle->SetActorLocation(FVector((ObstacleLength / 2.f) + CurrentSpawnPoint, Y, 50.f));
+
+		CurrentSpawnPoint += ObstacleLength + DistanceBetweenObstacles;
+
+		SpawnSide *= -1;
+
+		if (CurrentSpawnPoint >= ObstacleSpawnPoint) {
+			return;
+		}
+	}
 }

@@ -16,19 +16,19 @@ AMyCharacter::AMyCharacter() {
 	UCapsuleComponent *Collider = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Collider"));
 	Collider->SetCollisionProfileName(FName("CharacterMesh"));
 	Collider->SetGenerateOverlapEvents(true);
-	DefaultRoot = Collider;
+	RootComponent = Collider;
 
 	// Set this pawn to be controlled by the lowest-numbered player
 	AutoPossessPlayer = EAutoReceiveInput::Player0;
 	AutoReceiveInput = EAutoReceiveInput::Player0;
 
 	OurCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("OurCamera"));
-	OurCamera->SetupAttachment(DefaultRoot);
+	OurCamera->SetupAttachment(RootComponent);
 	OurCamera->SetRelativeLocation(FVector(-CameraDistance, 0.f, CameraDistance / 2.f));
 	OurCamera->SetRelativeRotation(FRotator(-45.f / 2.f, 0.f, 0.f));
 
 	Mesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh"));
-	Mesh->SetupAttachment(DefaultRoot);
+	Mesh->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned
