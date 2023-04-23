@@ -13,7 +13,9 @@ AMovingObstacle::AMovingObstacle() {
 
 	UBoxComponent *Collider = CreateDefaultSubobject<UBoxComponent>(TEXT("RootComponent"));
 	Collider->SetCollisionProfileName(FName("Trigger"));
-	RootComponent = Collider;
+
+	DefaultRoot = Collider;
+	RootComponent = DefaultRoot;
 
 	Cube = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Cube"));
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(TEXT("StaticMesh'/Engine/BasicShapes/Cube.Cube'"));

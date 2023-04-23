@@ -41,6 +41,8 @@ AMyCharacter::AMyCharacter() {
 void AMyCharacter::BeginPlay() {
 	Super::BeginPlay();
 
+	Health = 3;
+
 	auto Location = GetActorLocation();
 	if (Position == -1) {
 		Location.Y = -50.f;
@@ -123,4 +125,14 @@ void AMyCharacter::OnObstacleBeginOverlap(UPrimitiveComponent *OverlappedComp, A
 	Location.Y = 50.f * Position;
 	SetActorLocation(Location);
 	LastHit = Time;
+
+	UpdateHealth(-1);
+}
+
+void AMyCharacter::UpdateHealth(int Modifier) {
+	Health += Modifier;
+
+	if (Health < 0) {
+		
+	}
 }

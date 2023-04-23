@@ -19,6 +19,9 @@ class AMovingObstacle : public AActor {
 	virtual void BeginPlay() override;
 
   public:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	USceneComponent *DefaultRoot;
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	float GetLength();

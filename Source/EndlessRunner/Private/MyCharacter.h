@@ -26,7 +26,7 @@ class AMyCharacter : public APawn {
 	virtual void SetupPlayerInputComponent(class UInputComponent *PlayerInputComponent) override;
 
   public:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rendering")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	class USkeletalMeshComponent *Mesh;
 
 	UPROPERTY(EditDefaultsOnly)
@@ -49,6 +49,11 @@ class AMyCharacter : public APawn {
 
 	UPROPERTY(EditDefaultsOnly)
 	float TimeBetweenHits = 1.5f;
+
+	UPROPERTY(BlueprintReadOnly)
+	int Health = 3;
+
+	void UpdateHealth(int Modifier);
 
 	UFUNCTION()
 	void OnObstacleBeginOverlap(UPrimitiveComponent *OverlappedComp, AActor *OtherActor, UPrimitiveComponent *OtherComp,
