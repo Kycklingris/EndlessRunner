@@ -41,10 +41,13 @@ void AEndlessRunnerGameMode::Tick(float DeltaTime) {
 	}
 	// #endfold
 
+	// Spawn new Obstacle
 	if ((LastObstacle->GetActorLocation().X + (LastObstacle->GetLength() / 2.f)) <
 		ObstacleSpawnPoint - DistanceBetweenObstacles) {
 		SpawnObstacle();
 	}
+
+	// GetGameState<>()
 }
 
 void AEndlessRunnerGameMode::SpawnPlatforms() {

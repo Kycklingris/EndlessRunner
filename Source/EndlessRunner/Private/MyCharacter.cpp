@@ -6,6 +6,7 @@
 #include "EnhancedInput/Public/InputAction.h"
 #include "EnhancedInput/Public/EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AMyCharacter::AMyCharacter() {
@@ -16,6 +17,11 @@ AMyCharacter::AMyCharacter() {
 	UCapsuleComponent *Collider = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Collider"));
 	Collider->SetCollisionProfileName(FName("CharacterMesh"));
 	Collider->SetGenerateOverlapEvents(true);
+
+	TScriptDelegate<FWeakObjectPtr> OnObstacleBeginOverlapDelegate;
+	OnObstacleBeginOverlapDelegate.BindUFunction(this, "OnObstacleBeginOverlap");
+	Collider->OnComponentBeginOverlap.Add(OnObstacleBeginOverlapDelegate);
+
 	RootComponent = Collider;
 
 	// Set this pawn to be controlled by the lowest-numbered player
@@ -101,4 +107,20 @@ void AMyCharacter::Input_Move_Left(const FInputActionValue &InputActionValue) {
 		Location.Y = -50.f;
 		SetActorLocation(Location);
 	}
+}
+
+void AMyCharacter::OnObstacleBeginOverlap(UPrimitiveComponent *OverlappedComp, AActor *OtherActor,
+	UPrimitiveComponent *OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult) {
+
+	float Time = UGameplayStatics::GetRealTimeSeconds(GetWorld());
+
+	if (LastHit + TimeBetweenHits > Time) {
+		return;
+	}
+
+	Position *= -1;
+	auto Location = GetActorLocation();
+	Location.Y = 50.f * Position;
+	SetActorLocation(Location);
+	LastHit = Time;
 }

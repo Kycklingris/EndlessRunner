@@ -47,6 +47,14 @@ class AMyCharacter : public APawn {
 
 	void Input_Move_Right(const struct FInputActionValue &InputActionValue);
 
+	UPROPERTY(EditDefaultsOnly)
+	float TimeBetweenHits = 1.5f;
+
+	UFUNCTION()
+	void OnObstacleBeginOverlap(UPrimitiveComponent *OverlappedComp, AActor *OtherActor, UPrimitiveComponent *OtherComp,
+		int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult);
+
   private:
 	class UCameraComponent *OurCamera;
+	float LastHit = -500.f;
 };
