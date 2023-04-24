@@ -13,6 +13,12 @@ UCLASS(minimalapi) class AEndlessRunnerGameMode : public AGameModeBase {
 	AEndlessRunnerGameMode();
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	float MaxSpeedModifier = 10.0f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	float ModifierGainPerMinute = 1.0f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	float StartingPoint = -3000.f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -23,7 +29,6 @@ UCLASS(minimalapi) class AEndlessRunnerGameMode : public AGameModeBase {
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TArray<TSubclassOf<class AMyPlatform>> SpawnablePlatforms;
-
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	float FirstObstacleSpawnPoint = 5.f;

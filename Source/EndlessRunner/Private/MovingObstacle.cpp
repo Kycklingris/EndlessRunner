@@ -33,8 +33,10 @@ void AMovingObstacle::BeginPlay() {
 void AMovingObstacle::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
 
+	auto GameState = GetWorld()->GetGameState<AEndlessRunnerGameState>();
+
 	auto Location = GetActorLocation();
-	Location.X -= MovementSpeed * MovementSpeedMultipier * DeltaTime;
+	Location.X -= MovementSpeed * MovementSpeedMultipier * GameState->SpeedModifier * DeltaTime;
 	SetActorLocation(Location);
 
 	if (Location.X + GetLength() / 2.f < DespawnPoint) {

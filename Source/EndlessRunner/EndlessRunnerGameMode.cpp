@@ -3,6 +3,7 @@
 #include "EndlessRunnerGameMode.h"
 #include "Private/MyPlatform.h"
 #include "Private/MovingObstacle.h"
+#include "Private/EndlessRunnerGameState.h"
 #include "UObject/ConstructorHelpers.h"
 
 AEndlessRunnerGameMode::AEndlessRunnerGameMode() {
@@ -19,6 +20,8 @@ void AEndlessRunnerGameMode::BeginPlay() {
 void AEndlessRunnerGameMode::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
 
+	auto AGameState = GetGameState<AEndlessRunnerGameState>();
+
 	// #fold Spawn Platforms
 	if (PlatformsLength < MinLength) {
 		SpawnPlatforms();
@@ -31,7 +34,7 @@ void AEndlessRunnerGameMode::Tick(float DeltaTime) {
 
 		auto PlatformLength = Platform->GetLength();
 		auto Location = Platform->GetActorLocation();
-		auto NewLocation = FVector(Location.X - PlatformMoveSpeed * DeltaTime, 0.f, 0.f);
+		auto NewLocation = FVector(Location.X - PlatformMoveSpeed * AGameState->SpeedModifier * DeltaTime, 0.f, 0.f);
 		Platform->SetActorLocation(NewLocation);
 
 		if (NewLocation.X + PlatformLength / 2.f < StartingPoint) {
@@ -47,7 +50,7 @@ void AEndlessRunnerGameMode::Tick(float DeltaTime) {
 		SpawnObstacle();
 	}
 
-	// GetGameState<>()
+	AGameState->SpeedModifier += ModifierGainPerMinute * DeltaTime / 60.f;
 }
 
 void AEndlessRunnerGameMode::SpawnPlatforms() {
