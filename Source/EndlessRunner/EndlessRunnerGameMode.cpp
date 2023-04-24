@@ -51,6 +51,8 @@ void AEndlessRunnerGameMode::Tick(float DeltaTime) {
 	}
 
 	AGameState->SpeedModifier += ModifierGainPerMinute * DeltaTime / 60.f;
+
+	AGameState->Points += PointsPerMinute * DeltaTime / 60.f;
 }
 
 void AEndlessRunnerGameMode::SpawnPlatforms() {
