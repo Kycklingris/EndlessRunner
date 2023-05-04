@@ -10,14 +10,14 @@
 /**
  *
  */
-UCLASS()
+UCLASS(BlueprintType)
 class UMySaveGame : public USaveGame {
 	GENERATED_BODY()
   private:
 	static inline FString SaveSlotName = FString("Main");
 
   public:
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	TArray<int> Highscores;
 
   public:

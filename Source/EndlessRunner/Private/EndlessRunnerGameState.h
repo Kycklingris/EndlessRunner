@@ -15,6 +15,4 @@ class AEndlessRunnerGameState : public AGameStateBase {
 
   public:
 	float SpeedModifier = 1.0f;
-
-	float Points = 0.f;
 };

@@ -8,6 +8,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "EndlessRunnerGameState.h"
 #include "MySaveGame.h"
+#include "MyPlayerState.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
@@ -47,7 +48,9 @@ AMyCharacter::AMyCharacter() {
 void AMyCharacter::BeginPlay() {
 	Super::BeginPlay();
 
-	Health = 3;
+	AMyPlayerState *State = GetPlayerState<AMyPlayerState>();
+
+	State->Health = 3;
 
 	auto Location = GetActorLocation();
 	if (Position == -1) {
@@ -61,6 +64,10 @@ void AMyCharacter::BeginPlay() {
 // Called every frame
 void AMyCharacter::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
+
+	AMyPlayerState *State = GetPlayerState<AMyPlayerState>();
+
+	State->Points += PointsPerMinute * DeltaTime / 60.f;
 }
 
 // Called to bind functionality to input
@@ -131,21 +138,22 @@ void AMyCharacter::OnObstacleHit(UPrimitiveComponent *HitComp, AActor *OtherActo
 	Location.Y = 50.f * Position;
 	SetActorLocation(Location);
 
-	float Time = UGameplayStatics::GetRealTimeSeconds(GetWorld());
-	if (LastHit + TimeBetweenHits > Time) {
-		return;
-	}
-
-	LastHit = Time;
 	UpdateHealth(-1);
 }
 
 void AMyCharacter::UpdateHealth(int Modifier) {
-	Health += Modifier;
+	float Time = UGameplayStatics::GetRealTimeSeconds(GetWorld());
+	if (LastHit + TimeBetweenHits > Time) {
+		return;
+	}
+	AMyPlayerState *State = GetPlayerState<AMyPlayerState>();
 
-	if (Health < 0) {
-		auto GameState = GetWorld()->GetGameState<AEndlessRunnerGameState>();
-		int Points = (int)GameState->Points;
+	LastHit = Time;
+
+	State->Health += Modifier;
+
+	if (State->Health < 0) {
+		int Points = (int)State->Points;
 		UMySaveGame::SaveScore(Points);
 	}
 }

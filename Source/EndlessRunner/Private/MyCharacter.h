@@ -50,8 +50,8 @@ class AMyCharacter : public APawn {
 	UPROPERTY(EditDefaultsOnly)
 	float TimeBetweenHits = 1.5f;
 
-	UPROPERTY(BlueprintReadOnly)
-	int Health = 3;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	float PointsPerMinute = 1000;
 
 	void UpdateHealth(int Modifier);
 

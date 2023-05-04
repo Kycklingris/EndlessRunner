@@ -12,15 +12,11 @@ void UMySaveGame::SaveScore(int Score) {
 		OldHighscores = OldSave->Highscores;
 	}
 
-	if (GEngine) {
-		GEngine->AddOnScreenDebugMessage(
-			-1, 15.0f, FColor::Yellow, FString("Old Highscores: ") + FString::FromInt(OldSave->Highscores.Num()));
-	}
-
 	if (OldHighscores.Num() == 0) {
 		NewSave->Highscores.Add(Score);
 	} else {
 		bool FoundPlace = false;
+		// Make sure that at most 50 highscores are saved.
 		for (int i = 0; i < OldHighscores.Num(); i++) {
 			if (!FoundPlace && Score > OldHighscores[i]) {
 				FoundPlace = true;
@@ -36,10 +32,6 @@ void UMySaveGame::SaveScore(int Score) {
 		}
 	}
 
-	if (GEngine) {
-		GEngine->AddOnScreenDebugMessage(
-			-1, 15.0f, FColor::Yellow, FString("New Highscores: ") + FString::FromInt(NewSave->Highscores.Num()));
-	}
 	UGameplayStatics::SaveGameToSlot(NewSave, SaveSlotName, 0);
 }
 

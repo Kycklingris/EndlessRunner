@@ -13,9 +13,6 @@ UCLASS(minimalapi) class AEndlessRunnerGameMode : public AGameModeBase {
 	AEndlessRunnerGameMode();
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	float PointsPerMinute = 1000;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	float MaxSpeedModifier = 10.0f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
