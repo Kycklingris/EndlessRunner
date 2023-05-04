@@ -53,6 +53,8 @@ class AMyCharacter : public APawn {
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	float PointsPerMinute = 1000;
 
+	float XOffset = 0.f;
+
 	void UpdateHealth(int Modifier);
 
 	UFUNCTION()

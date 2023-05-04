@@ -111,7 +111,7 @@ void AMyCharacter::Input_Move_Right(const FInputActionValue &InputActionValue) {
 		Position = 1;
 		auto Location = GetActorLocation();
 		Location.Y = 50.f;
-		SetActorLocation(Location, true);
+		SetActorLocation(Location);
 	}
 }
 
@@ -120,15 +120,12 @@ void AMyCharacter::Input_Move_Left(const FInputActionValue &InputActionValue) {
 		Position = -1;
 		auto Location = GetActorLocation();
 		Location.Y = -50.f;
-		SetActorLocation(Location, true);
+		SetActorLocation(Location);
 	}
 }
 
 void AMyCharacter::OnObstacleBeginOverlap(UPrimitiveComponent *OverlappedComp, AActor *OtherActor,
 	UPrimitiveComponent *OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult) {
-	if (GEngine) {
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("GAY~!"));
-	}
 }
 
 void AMyCharacter::OnObstacleHit(UPrimitiveComponent *HitComp, AActor *OtherActor, UPrimitiveComponent *OtherComp,
@@ -152,10 +149,10 @@ void AMyCharacter::UpdateHealth(int Modifier) {
 
 	State->Health += Modifier;
 
-	if (State->Health <= 0) {
-		int Points = (int)State->Points;
-		UMySaveGame::SaveScore(Points);
+	// if (State->Health <= 0) {
+	// 	int Points = (int)State->Points;
+	// 	UMySaveGame::SaveScore(Points);
 
-		UGameplayStatics::OpenLevel(GetWorld(), FName("MainMenuLevel"));
-	}
+	// 	UGameplayStatics::OpenLevel(GetWorld(), FName("MainMenuLevel"));
+	// }
 }

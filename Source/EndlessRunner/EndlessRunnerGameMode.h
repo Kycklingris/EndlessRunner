@@ -28,6 +28,9 @@ UCLASS(minimalapi) class AEndlessRunnerGameMode : public AGameModeBase {
 	float PlatformMoveSpeed = 200.f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	float SpaceBetweenPlatforms = 300.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TArray<TSubclassOf<class AMyPlatform>> SpawnablePlatforms;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -54,7 +57,8 @@ UCLASS(minimalapi) class AEndlessRunnerGameMode : public AGameModeBase {
 
 	void SpawnPlatforms();
 	void PreSpawnPlatforms();
-	void StorePlatform(AMyPlatform *Platform);
+
+	TArray<class AMovingObstacle *> Obstacles;
 
 	class AMovingObstacle *LastObstacle;
 	int SpawnSide = 1;
