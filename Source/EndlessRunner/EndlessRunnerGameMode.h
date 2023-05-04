@@ -52,10 +52,11 @@ UCLASS(minimalapi) class AEndlessRunnerGameMode : public AGameModeBase {
 	TArray<TSubclassOf<class AMovingObstacle>> SpawnableObstacles;
 
   private:
-	float PlatformsLength = 0;
 	TArray<AMyPlatform *> Platforms;
+	AMyPlatform *LastPlatform;
 
 	void SpawnPlatforms();
+	void PreSpawnPlatforms();
 	void StorePlatform(AMyPlatform *Platform);
 
 	class AMovingObstacle *LastObstacle;

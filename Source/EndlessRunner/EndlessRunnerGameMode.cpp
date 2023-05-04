@@ -13,6 +13,7 @@ AEndlessRunnerGameMode::AEndlessRunnerGameMode() {
 // Called when the game starts or when spawned
 void AEndlessRunnerGameMode::BeginPlay() {
 	Super::BeginPlay();
+	PreSpawnPlatforms();
 	SpawnPlatforms();
 	PreSpawnObstacles();
 }
@@ -23,7 +24,7 @@ void AEndlessRunnerGameMode::Tick(float DeltaTime) {
 	auto AGameState = GetGameState<AEndlessRunnerGameState>();
 
 	// #fold Spawn Platforms
-	if (PlatformsLength < MinLength) {
+	if (LastPlatform->GetActorLocation().X < (StartingPoint + MinLength)) {
 		SpawnPlatforms();
 	}
 
@@ -32,13 +33,11 @@ void AEndlessRunnerGameMode::Tick(float DeltaTime) {
 			continue;
 		}
 
-		auto PlatformLength = Platform->GetLength();
 		auto Location = Platform->GetActorLocation();
 		auto NewLocation = FVector(Location.X - PlatformMoveSpeed * AGameState->SpeedModifier * DeltaTime, 0.f, 0.f);
 		Platform->SetActorLocation(NewLocation);
 
-		if (NewLocation.X + PlatformLength / 2.f < StartingPoint) {
-			PlatformsLength -= PlatformLength;
+		if (NewLocation.X < StartingPoint) {
 			Platform->Destroy();
 		}
 	}
@@ -51,7 +50,6 @@ void AEndlessRunnerGameMode::Tick(float DeltaTime) {
 	}
 
 	AGameState->SpeedModifier += ModifierGainPerMinute * DeltaTime / 60.f;
-
 	AGameState->Points += PointsPerMinute * DeltaTime / 60.f;
 }
 
@@ -70,10 +68,39 @@ void AEndlessRunnerGameMode::SpawnPlatforms() {
 			SpawnablePlatforms[Index], FVector(0.f, 0.f, 0.f), FRotator(0.f), SpawnInfo);
 
 		float PlatformLength = Platform->GetLength();
+
+		auto LastLocation = LastPlatform->GetActorLocation();
+		auto LastLength = LastPlatform->GetLength();
+
+		auto Location = FVector(LastLocation.X + (LastLength / 2.f) + (PlatformLength / 2.f), 0.f, 0.f);
+		Platform->SetActorLocation(Location);
+		StorePlatform(Platform);
+
+		LastPlatform = Platform;
+		if (Location.X >= MinLength) {
+			return;
+		}
+	}
+}
+
+void AEndlessRunnerGameMode::PreSpawnPlatforms() {
+	auto PlatformsLength = 0.f;
+
+	// Spawn new platforms until atleast minimum length.
+	while (true) {
+		int Index = FMath::RandRange(0, SpawnablePlatforms.Num() - 1);
+
+		FActorSpawnParameters SpawnInfo;
+
+		auto Platform = GetWorld()->SpawnActor<AMyPlatform>(
+			SpawnablePlatforms[Index], FVector(0.f, 0.f, 0.f), FRotator(0.f), SpawnInfo);
+
+		float PlatformLength = Platform->GetLength();
 		Platform->SetActorLocation(FVector((PlatformLength / 2.f) + StartingPoint + PlatformsLength, 0.f, 0.f));
 		PlatformsLength += PlatformLength;
 		StorePlatform(Platform);
 
+		LastPlatform = Platform;
 		if (PlatformsLength >= MinLength) {
 			return;
 		}
