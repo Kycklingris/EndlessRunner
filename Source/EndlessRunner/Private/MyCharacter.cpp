@@ -8,7 +8,6 @@
 #include "EnhancedInputSubsystems.h"
 #include "EndlessRunnerGameState.h"
 #include "MySaveGame.h"
-#include "MyPlayerState.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
@@ -39,9 +38,7 @@ AMyCharacter::AMyCharacter() {
 void AMyCharacter::BeginPlay() {
 	Super::BeginPlay();
 
-	AMyPlayerState *State = GetPlayerState<AMyPlayerState>();
-
-	State->Health = 3;
+	Health = 3;
 
 	auto Location = GetActorLocation();
 	YOffset = Location.Y;
@@ -57,9 +54,7 @@ void AMyCharacter::BeginPlay() {
 void AMyCharacter::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
 
-	AMyPlayerState *State = GetPlayerState<AMyPlayerState>();
-
-	State->Points += PointsPerMinute * DeltaTime / 60.f;
+	Points += PointsPerMinute * DeltaTime / 60.f;
 }
 
 // Called to bind functionality to input
@@ -99,21 +94,25 @@ void AMyCharacter::SetupPlayerInputComponent(UInputComponent *PlayerInputCompone
 }
 
 void AMyCharacter::Input_Move_Right(const FInputActionValue &InputActionValue) {
-	if (Controller != nullptr) {
-		Position = 1;
-		auto Location = GetActorLocation();
-		Location.Y = YOffset + 50.f;
-		SetActorLocation(Location);
-	}
+	Move_Right();
 }
 
 void AMyCharacter::Input_Move_Left(const FInputActionValue &InputActionValue) {
-	if (Controller != nullptr) {
-		Position = -1;
-		auto Location = GetActorLocation();
-		Location.Y = YOffset + -50.f;
-		SetActorLocation(Location);
-	}
+	Move_Left();
+}
+
+void AMyCharacter::Move_Left() {
+	Position = -1;
+	auto Location = GetActorLocation();
+	Location.Y = YOffset + -50.f;
+	SetActorLocation(Location);
+}
+
+void AMyCharacter::Move_Right() {
+	Position = 1;
+	auto Location = GetActorLocation();
+	Location.Y = YOffset + 50.f;
+	SetActorLocation(Location);
 }
 
 void AMyCharacter::OnObstacleBeginOverlap(UPrimitiveComponent *OverlappedComp, AActor *OtherActor,
@@ -138,14 +137,12 @@ void AMyCharacter::UpdateHealth(int Modifier) {
 	if (LastHit + TimeBetweenHits > Time) {
 		return;
 	}
-	AMyPlayerState *State = GetPlayerState<AMyPlayerState>();
 
 	LastHit = Time;
 
-	State->Health += Modifier;
-
-	// if (State->Health <= 0) {
-	// 	int Points = (int)State->Points;
+	Health += Modifier;
+	// if (Health <= 0) {
+	// 	int Points = (int)Points;
 	// 	UMySaveGame::SaveScore(Points);
 
 	// 	UGameplayStatics::OpenLevel(GetWorld(), FName("MainMenuLevel"));

@@ -26,6 +26,12 @@ class AMyCharacter : public APawn {
 	virtual void SetupPlayerInputComponent(class UInputComponent *PlayerInputComponent) override;
 
   public:
+	UPROPERTY(BlueprintReadOnly)
+	float Points = 0.f;
+
+	UPROPERTY(BlueprintReadOnly)
+	int Health = 3;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	class USkeletalMeshComponent *Mesh;
 
@@ -40,10 +46,6 @@ class AMyCharacter : public APawn {
 	UPROPERTY(EditDefaultsOnly)
 	class UInputMappingContext *MappingContext;
 
-	void Input_Move_Left(const struct FInputActionValue &InputActionValue);
-
-	void Input_Move_Right(const struct FInputActionValue &InputActionValue);
-
 	UPROPERTY(EditDefaultsOnly)
 	float TimeBetweenHits = 1.5f;
 
@@ -51,6 +53,14 @@ class AMyCharacter : public APawn {
 	float PointsPerMinute = 1000;
 
 	void UpdateHealth(int Modifier);
+
+	void Move_Left();
+	void Move_Right();
+
+  private:
+	void Input_Move_Left(const struct FInputActionValue &InputActionValue);
+
+	void Input_Move_Right(const struct FInputActionValue &InputActionValue);
 
 	UFUNCTION()
 	void OnObstacleBeginOverlap(UPrimitiveComponent *OverlappedComp, AActor *OtherActor, UPrimitiveComponent *OtherComp,
@@ -60,7 +70,6 @@ class AMyCharacter : public APawn {
 	void OnObstacleHit(UPrimitiveComponent *HitComp, AActor *OtherActor, UPrimitiveComponent *OtherComp,
 		int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult);
 
-  private:
 	float YOffset = 0.f;
 	float LastHit = -500.f;
 };
