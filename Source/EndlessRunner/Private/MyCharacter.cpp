@@ -24,6 +24,10 @@ AMyCharacter::AMyCharacter() {
 	OnObstacleBeginOverlapDelegate.BindUFunction(this, "OnObstacleBeginOverlap");
 	Collider->OnComponentBeginOverlap.Add(OnObstacleBeginOverlapDelegate);
 
+	TScriptDelegate<FWeakObjectPtr> OnObstacleHitDelegate;
+	OnObstacleHitDelegate.BindUFunction(this, "OnObstacleHit");
+	Collider->OnComponentHit.Add(OnObstacleHitDelegate);
+
 	RootComponent = Collider;
 
 	// Set this pawn to be controlled by the lowest-numbered player
@@ -100,7 +104,7 @@ void AMyCharacter::Input_Move_Right(const FInputActionValue &InputActionValue) {
 		Position = 1;
 		auto Location = GetActorLocation();
 		Location.Y = 50.f;
-		SetActorLocation(Location);
+		SetActorLocation(Location, true);
 	}
 }
 
@@ -109,25 +113,30 @@ void AMyCharacter::Input_Move_Left(const FInputActionValue &InputActionValue) {
 		Position = -1;
 		auto Location = GetActorLocation();
 		Location.Y = -50.f;
-		SetActorLocation(Location);
+		SetActorLocation(Location, true);
 	}
 }
 
 void AMyCharacter::OnObstacleBeginOverlap(UPrimitiveComponent *OverlappedComp, AActor *OtherActor,
 	UPrimitiveComponent *OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult) {
-
-	float Time = UGameplayStatics::GetRealTimeSeconds(GetWorld());
-
-	if (LastHit + TimeBetweenHits > Time) {
-		return;
+	if (GEngine) {
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("GAY~!"));
 	}
+}
 
+void AMyCharacter::OnObstacleHit(UPrimitiveComponent *HitComp, AActor *OtherActor, UPrimitiveComponent *OtherComp,
+	int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult) {
 	Position *= -1;
 	auto Location = GetActorLocation();
 	Location.Y = 50.f * Position;
 	SetActorLocation(Location);
-	LastHit = Time;
 
+	float Time = UGameplayStatics::GetRealTimeSeconds(GetWorld());
+	if (LastHit + TimeBetweenHits > Time) {
+		return;
+	}
+
+	LastHit = Time;
 	UpdateHealth(-1);
 }
 
@@ -149,9 +158,7 @@ void AMyCharacter::UpdateHealth(int Modifier) {
 		}
 
 		if (GEngine) {
-			if (OldHighscores.Num() > 0) {
-				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::FromInt(OldHighscores[0]));
-			}
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::FromInt(OldHighscores.Num()));
 		}
 
 		if (OldHighscores.Num() == 0) {
