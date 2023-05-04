@@ -152,8 +152,10 @@ void AMyCharacter::UpdateHealth(int Modifier) {
 
 	State->Health += Modifier;
 
-	if (State->Health < 0) {
+	if (State->Health <= 0) {
 		int Points = (int)State->Points;
 		UMySaveGame::SaveScore(Points);
+
+		UGameplayStatics::OpenLevel(GetWorld(), FName("MainMenuLevel"));
 	}
 }

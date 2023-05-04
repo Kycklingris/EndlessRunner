@@ -85,6 +85,9 @@ void AEndlessRunnerGameMode::SpawnPlatforms() {
 }
 
 void AEndlessRunnerGameMode::PreSpawnPlatforms() {
+	if (SpawnablePlatforms.Num() == 0) {
+		return;
+	}
 	auto PlatformsLength = 0.f;
 
 	// Spawn new platforms until atleast minimum length.
@@ -120,6 +123,9 @@ void AEndlessRunnerGameMode::StorePlatform(AMyPlatform *Platform) {
 }
 
 void AEndlessRunnerGameMode::SpawnObstacle() {
+	if (SpawnableObstacles.Num() == 0) {
+		return;
+	}
 	int Index = FMath::RandRange(0, SpawnableObstacles.Num() - 1);
 
 	FActorSpawnParameters SpawnInfo;
@@ -144,6 +150,9 @@ void AEndlessRunnerGameMode::SpawnObstacle() {
 }
 
 void AEndlessRunnerGameMode::PreSpawnObstacles() {
+	if (SpawnableObstacles.Num() == 0) {
+		return;
+	}
 	float CurrentSpawnPoint = FirstObstacleSpawnPoint;
 
 	while (true) {
