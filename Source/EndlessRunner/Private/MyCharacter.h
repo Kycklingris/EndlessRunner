@@ -29,9 +29,6 @@ class AMyCharacter : public APawn {
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	class USkeletalMeshComponent *Mesh;
 
-	UPROPERTY(EditDefaultsOnly)
-	float CameraDistance = 250.f;
-
 	int Position = -1;
 
 	UPROPERTY(EditDefaultsOnly)
@@ -53,8 +50,6 @@ class AMyCharacter : public APawn {
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	float PointsPerMinute = 1000;
 
-	float XOffset = 0.f;
-
 	void UpdateHealth(int Modifier);
 
 	UFUNCTION()
@@ -66,6 +61,6 @@ class AMyCharacter : public APawn {
 		int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult);
 
   private:
-	class UCameraComponent *OurCamera;
+	float YOffset = 0.f;
 	float LastHit = -500.f;
 };

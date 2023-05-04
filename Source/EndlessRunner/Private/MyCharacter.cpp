@@ -31,15 +31,6 @@ AMyCharacter::AMyCharacter() {
 
 	RootComponent = Collider;
 
-	// Set this pawn to be controlled by the lowest-numbered player
-	AutoPossessPlayer = EAutoReceiveInput::Player0;
-	AutoReceiveInput = EAutoReceiveInput::Player0;
-
-	OurCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("OurCamera"));
-	OurCamera->SetupAttachment(RootComponent);
-	OurCamera->SetRelativeLocation(FVector(-CameraDistance, 0.f, CameraDistance / 2.f));
-	OurCamera->SetRelativeRotation(FRotator(-45.f / 2.f, 0.f, 0.f));
-
 	Mesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh"));
 	Mesh->SetupAttachment(RootComponent);
 }
@@ -53,10 +44,11 @@ void AMyCharacter::BeginPlay() {
 	State->Health = 3;
 
 	auto Location = GetActorLocation();
+	YOffset = Location.Y;
 	if (Position == -1) {
-		Location.Y = -50.f;
+		Location.Y = YOffset + -50.f;
 	} else {
-		Location.Y = 50.f;
+		Location.Y = YOffset + 50.f;
 	}
 	SetActorLocation(Location);
 }
@@ -110,7 +102,7 @@ void AMyCharacter::Input_Move_Right(const FInputActionValue &InputActionValue) {
 	if (Controller != nullptr) {
 		Position = 1;
 		auto Location = GetActorLocation();
-		Location.Y = 50.f;
+		Location.Y = YOffset + 50.f;
 		SetActorLocation(Location);
 	}
 }
@@ -119,7 +111,7 @@ void AMyCharacter::Input_Move_Left(const FInputActionValue &InputActionValue) {
 	if (Controller != nullptr) {
 		Position = -1;
 		auto Location = GetActorLocation();
-		Location.Y = -50.f;
+		Location.Y = YOffset + -50.f;
 		SetActorLocation(Location);
 	}
 }
@@ -130,9 +122,12 @@ void AMyCharacter::OnObstacleBeginOverlap(UPrimitiveComponent *OverlappedComp, A
 
 void AMyCharacter::OnObstacleHit(UPrimitiveComponent *HitComp, AActor *OtherActor, UPrimitiveComponent *OtherComp,
 	int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult) {
-	Position *= -1;
+
 	auto Location = GetActorLocation();
-	Location.Y = 50.f * Position;
+
+	Position *= -1;
+	Location.Y = YOffset + 50.f * Position;
+
 	SetActorLocation(Location);
 
 	UpdateHealth(-1);
