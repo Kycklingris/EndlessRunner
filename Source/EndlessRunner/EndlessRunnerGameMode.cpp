@@ -5,6 +5,8 @@
 #include "Private/MovingObstacle.h"
 #include "Private/EndlessRunnerGameState.h"
 #include "UObject/ConstructorHelpers.h"
+#include "MySaveGame.h"
+#include "Kismet/GameplayStatics.h"
 
 AEndlessRunnerGameMode::AEndlessRunnerGameMode() {
 	PrimaryActorTick.bCanEverTick = true;

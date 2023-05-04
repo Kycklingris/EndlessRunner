@@ -143,44 +143,9 @@ void AMyCharacter::OnObstacleHit(UPrimitiveComponent *HitComp, AActor *OtherActo
 void AMyCharacter::UpdateHealth(int Modifier) {
 	Health += Modifier;
 
-	static FString SaveSlotName = FString("Main");
-
 	if (Health < 0) {
 		auto GameState = GetWorld()->GetGameState<AEndlessRunnerGameState>();
 		int Points = (int)GameState->Points;
-		auto OldSave = Cast<UMySaveGame>(UGameplayStatics::LoadGameFromSlot(SaveSlotName, 0));
-		auto NewSave = Cast<UMySaveGame>(UGameplayStatics::CreateSaveGameObject(UMySaveGame::StaticClass()));
-
-		TArray<int> OldHighscores;
-		TArray<int> NewHighscores;
-		if (OldSave != nullptr) {
-			OldHighscores = OldSave->Highscores;
-		}
-
-		if (GEngine) {
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::FromInt(OldHighscores.Num()));
-		}
-
-		if (OldHighscores.Num() == 0) {
-			NewHighscores.Add(Points);
-		} else {
-			bool FoundPlace = false;
-			for (int i = 0; i < OldHighscores.Num(); i++) {
-				if (!FoundPlace && Points > OldHighscores[i]) {
-					FoundPlace = true;
-					NewHighscores.Add(Points);
-					i--;
-				} else {
-					NewHighscores.Add(OldHighscores[i]);
-				}
-
-				if (NewHighscores.Num() > 50) {
-					break;
-				}
-			}
-		}
-
-		NewSave->Highscores = NewHighscores;
-		UGameplayStatics::SaveGameToSlot(NewSave, SaveSlotName, 0);
+		UMySaveGame::SaveScore(Points);
 	}
 }
