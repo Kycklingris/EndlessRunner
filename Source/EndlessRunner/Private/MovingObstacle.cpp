@@ -12,7 +12,7 @@ AMovingObstacle::AMovingObstacle() {
 	PrimaryActorTick.bCanEverTick = true;
 
 	UBoxComponent *Collider = CreateDefaultSubobject<UBoxComponent>(TEXT("RootComponent"));
-	Collider->SetCollisionProfileName(FName("BlockAllDynamic"));
+	Collider->SetCollisionProfileName(FName("Trigger"));
 
 	DefaultRoot = Collider;
 	RootComponent = DefaultRoot;
@@ -37,7 +37,7 @@ void AMovingObstacle::Tick(float DeltaTime) {
 
 	auto Location = GetActorLocation();
 	Location.X -= MovementSpeed * MovementSpeedMultipier * GameState->SpeedModifier * DeltaTime;
-	SetActorLocation(Location, true);
+	SetActorLocation(Location);
 
 	if (Location.X + GetLength() / 2.f < DespawnPoint) {
 		Destroy();
