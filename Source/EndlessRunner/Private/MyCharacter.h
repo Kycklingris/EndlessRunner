@@ -27,7 +27,7 @@ class AMyCharacter : public APawn {
 
   public:
 	UPROPERTY(BlueprintReadOnly)
-	float Points = 0.f;
+	float Score = 0.f;
 
 	UPROPERTY(BlueprintReadOnly)
 	int Health = 3;
@@ -50,7 +50,7 @@ class AMyCharacter : public APawn {
 	float TimeBetweenHits = 1.5f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	float PointsPerMinute = 1000;
+	float ScorePerMinute = 1000;
 
 	void UpdateHealth(int Modifier);
 
@@ -72,4 +72,7 @@ class AMyCharacter : public APawn {
 
 	float YOffset = 0.f;
 	float LastHit = -500.f;
+
+	float LastDodgeTime = 0.f;
+	float TimeBetweenDodges = 0.5f;
 };

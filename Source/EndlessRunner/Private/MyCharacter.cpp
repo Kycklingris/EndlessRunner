@@ -7,6 +7,7 @@
 #include "EnhancedInput/Public/EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "EndlessRunnerGameState.h"
+#include "../EndlessRunnerGameMode.h"
 #include "MySaveGame.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -54,7 +55,7 @@ void AMyCharacter::BeginPlay() {
 void AMyCharacter::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
 
-	Points += PointsPerMinute * DeltaTime / 60.f;
+	Score += ScorePerMinute * DeltaTime / 60.f;
 }
 
 // Called to bind functionality to input
@@ -117,6 +118,15 @@ void AMyCharacter::Move_Right() {
 
 void AMyCharacter::OnObstacleBeginOverlap(UPrimitiveComponent *OverlappedComp, AActor *OtherActor,
 	UPrimitiveComponent *OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult) {
+	float Time = UGameplayStatics::GetRealTimeSeconds(GetWorld());
+	if (LastDodgeTime + TimeBetweenDodges > Time) {
+		return;
+	}
+	LastDodgeTime = Time;
+
+	AEndlessRunnerGameMode *Mode = Cast<AEndlessRunnerGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+
+	Mode->SuccessfulDodge();
 }
 
 void AMyCharacter::OnObstacleHit(UPrimitiveComponent *HitComp, AActor *OtherActor, UPrimitiveComponent *OtherComp,
@@ -141,10 +151,9 @@ void AMyCharacter::UpdateHealth(int Modifier) {
 	LastHit = Time;
 
 	Health += Modifier;
-	// if (Health <= 0) {
-	// 	int Points = (int)Points;
-	// 	UMySaveGame::SaveScore(Points);
+	if (Health <= 0) {
+		UMySaveGame::SaveScore((int)Score);
 
-	// 	UGameplayStatics::OpenLevel(GetWorld(), FName("MainMenuLevel"));
-	// }
+		UGameplayStatics::OpenLevel(GetWorld(), FName("MainMenuLevel"));
+	}
 }

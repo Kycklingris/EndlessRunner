@@ -157,6 +157,9 @@ void AEndlessRunnerGameMode::SpawnObstacle() {
 	Obstacle2->SetActorLocation(
 		FVector((ObstacleLength / 2.f) + ObstacleSpawnPoint, (SpaceBetweenPlatforms / 2.f) + Y, 50.f));
 
+	ObstaclesLeft.Add(Obstacle);
+	ObstaclesRight.Add(Obstacle2);
+
 	LastObstacle = Obstacle;
 }
 
@@ -198,9 +201,32 @@ void AEndlessRunnerGameMode::PreSpawnObstacles() {
 
 		SpawnSide *= -1;
 
+		ObstaclesLeft.Add(Obstacle);
+		ObstaclesRight.Add(Obstacle2);
+
 		if (CurrentSpawnPoint >= ObstacleSpawnPoint) {
 			LastObstacle = Obstacle;
 			return;
 		}
 	}
+}
+
+void AEndlessRunnerGameMode::SuccessfulDodge() {
+	float Percent = FMath::RandRange(0.f, 1.f);
+
+	if (Percent <= SuccessfulDodgePercent / 100.f) {
+		// -2 To make sure that LastObstacle never gets removed, since it is used for spawning.
+		int Index = FMath::RandRange(0, ObstaclesLeft.Num() - 2);
+
+		ObstaclesLeft[Index]->Destroy();
+		ObstaclesRight[Index]->Destroy();
+
+		ObstaclesLeft.RemoveAt(Index);
+		ObstaclesRight.RemoveAt(Index);
+	}
+}
+
+void AEndlessRunnerGameMode::RemoveObstacle(AMovingObstacle *Obstacle) {
+	ObstaclesLeft.Remove(Obstacle);
+	ObstaclesRight.Remove(Obstacle);
 }

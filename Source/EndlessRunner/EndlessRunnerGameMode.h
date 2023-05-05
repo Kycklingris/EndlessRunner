@@ -51,6 +51,12 @@ UCLASS(minimalapi) class AEndlessRunnerGameMode : public AGameModeBase {
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TArray<TSubclassOf<class AMovingObstacle>> SpawnableObstacles;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	float SuccessfulDodgePercent = 20.0f;
+
+	void SuccessfulDodge();
+	void RemoveObstacle(class AMovingObstacle *Obstacle);
+
   private:
 	TArray<AMyPlatform *> Platforms;
 	AMyPlatform *LastPlatform;
@@ -58,7 +64,8 @@ UCLASS(minimalapi) class AEndlessRunnerGameMode : public AGameModeBase {
 	void SpawnPlatforms();
 	void PreSpawnPlatforms();
 
-	TArray<class AMovingObstacle *> Obstacles;
+	TArray<class AMovingObstacle *> ObstaclesLeft;
+	TArray<class AMovingObstacle *> ObstaclesRight;
 
 	class AMovingObstacle *LastObstacle;
 	int SpawnSide = 1;

@@ -5,6 +5,7 @@
 #include "EndlessRunnerGameState.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/BoxComponent.h"
+#include "../EndlessRunnerGameMode.h"
 
 // Sets default values
 AMovingObstacle::AMovingObstacle() {
@@ -40,6 +41,10 @@ void AMovingObstacle::Tick(float DeltaTime) {
 	SetActorLocation(Location, true);
 
 	if (Location.X + GetLength() / 2.f < DespawnPoint) {
+		AEndlessRunnerGameMode *Mode = Cast<AEndlessRunnerGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+
+		Mode->RemoveObstacle(this);
+
 		Destroy();
 	}
 }
